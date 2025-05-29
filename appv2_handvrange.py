@@ -6,7 +6,6 @@ import random
 from statistics import mean
 
 deck = [rank + suit for rank in "23456789TJQKA" for suit in "♠♥♦♣"]
-suits = "♠♥♦♣"
 
 def win_rank(hole_cards, com_cards):
     rank_array = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
@@ -402,50 +401,73 @@ def hand_v_range(simul, player_1, x_inp, com_cards, dead_cards):
     player_2_range = []
 
     for i in x_inp:
-        p2_num_1, p2_num_2, p2_suitedness = i[0], i[1], i[2]
-        # Suited logic
-        if p2_suitedness == "s":
+        # Check if it's a pocket pair (e.g., "AA", "KK", "QQ")
+        if len(i) == 2 and i[0] == i[1]:
+            # Pocket pair logic
+            p2_num = i[0]
             card_combo = []
-            for j in deck:
-                if j.startswith(p2_num_1):
-                    if p2_num_2+j[1] in deck:
-                        card_combo.append(j)
-                        card_combo.append(p2_num_2+j[1])
-                        player_2_range.append(card_combo)
-                        card_combo = []
-        # Offsuit logic
+            available_cards = [card for card in deck if card.startswith(p2_num)]
+            
+            # Generate all combinations of the same rank
+            for j in range(len(available_cards)):
+                for k in range(j + 1, len(available_cards)):
+                    card_combo = [available_cards[j], available_cards[k]]
+                    player_2_range.append(card_combo)
+        
         else:
-            card_combo = []
-            for j in deck:
-                if j.startswith(p2_num_1):
-                    avail_suit = ["♠","♥","♦","♣"]
-                    avail_suit.remove(j[1])
-                    for k in avail_suit:
-                        if p2_num_2+k in deck:
+            # Non-pocket pair hands
+            if len(i) == 3:  # Has suitedness indicator
+                p2_num_1, p2_num_2, p2_suitedness = i[0], i[1], i[2]
+            else:  # Assume offsuit if no indicator
+                p2_num_1, p2_num_2, p2_suitedness = i[0], i[1], "o"
+            
+            # Suited logic
+            if p2_suitedness == "s":
+                card_combo = []
+                for j in deck:
+                    if j.startswith(p2_num_1):
+                        if p2_num_2 + j[1] in deck:
                             card_combo.append(j)
-                            card_combo.append(p2_num_2+k)
+                            card_combo.append(p2_num_2 + j[1])
                             player_2_range.append(card_combo)
                             card_combo = []
-
+            # Offsuit logic
+            else:
+                card_combo = []
+                for j in deck:
+                    if j.startswith(p2_num_1):
+                        avail_suit = ["♠", "♥", "♦", "♣"]
+                        avail_suit.remove(j[1])
+                        for k in avail_suit:
+                            if p2_num_2 + k in deck:
+                                card_combo.append(j)
+                                card_combo.append(p2_num_2 + k)
+                                player_2_range.append(card_combo)
+                                card_combo = []
     seen = set()
     player_2_range_final = []
 
     for cards in player_2_range:
-        if cards[0] not in seen:
+        # Create a sorted tuple to avoid duplicate combinations like [A♥, A♠] and [A♠, A♥]
+        card_tuple = tuple(sorted(cards))
+        if card_tuple not in seen:
             player_2_range_final.append(cards)
-            seen.add(cards[0])
+            seen.add(card_tuple)
 
     win_percent_array = []
     tie_percent_array = []
-    c=0
+    c = 0
     for i in player_2_range_final:
-        player_card_set = [player_1,i]
+        player_card_set = [player_1, i]
         multi_way_equity(simul, player_card_set, com_cards, dead_cards)
         win_percent_array.append(win_percent)
         tie_percent_array.append(tie_percent)
-        c+=1
-    win_equity = round(mean(win_percent_array),3)
-    tie_equity = round(mean(tie_percent_array),3)
+        c += 1
+    
+    print(player_2_range_final)
+    print(win_percent_array)
+    win_equity = round(mean(win_percent_array), 3)
+    tie_equity = round(mean(tie_percent_array), 3)
     global result
     result = f"Player:: win rate: {win_equity}%, tie percent: {tie_equity}%\n"
 
@@ -686,7 +708,6 @@ class PokerTableGUI:
                 base_color = "lightgreen"
             btn.config(relief="raised", bg=base_color)
 
-
     def reset_table(self):
         for box, img_label in list(self.box_contents.items()):
             x, y = self.card_positions[img_label]
@@ -749,7 +770,7 @@ class PokerTableGUI:
         elif accuracy_level == 2:
             simul = 2000
         elif accuracy_level == 3:
-            simul = 5000
+            simul = 5000    
         elif accuracy_level == 4:
             simul = 10000
         elif accuracy_level == 5:
@@ -758,7 +779,6 @@ class PokerTableGUI:
         hand_v_range(simul,player_hand,player_2_selected_range, community_cards, dead_cards)
 
         messagebox.showinfo("Poker Equity Calculation", result)
-
 
 if __name__ == "__main__":
     root = tk.Tk()
