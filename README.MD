@@ -1,9 +1,9 @@
-This is my first published python project which I have built from scrtach. This project was to test out the functionalities of the monte carlo simulation in different poker scenario by calculating equity (win odds). A few things to take into account:
+This is my updated publish of my first python project which I have built from scrtach. This project was to test out the functionalities of the monte carlo simulation in different poker scenario by calculating equity (win odds). A few things to take into account:
 
 * Install the pillow library
 * Unzip the cards file
 
-The project has 3 main code blocks:
+The project has 4 main code blocks:
 
 1. win_rank():
 
@@ -22,19 +22,30 @@ This code block runs the monte carlo simualation and takes into account multiple
 
 For each simulation, it takes into account which player has won or which players have tied.
 
+3. hand_v_range():
+
+This code block assimilates all the possible card combination the opponent (villain) can have and matches them up against the given combination of the hero. 
+
+This block shares the same parameters as multi_way_equity() however it has the added x_inp parameter, it tackles:
+
+~ Card combination creation: For example pocket 44 can be represented as 4 of hearts, 4 of spades then 4 of spades, 4 of clubs and so on
+~ Suitedness: If a card combination is suited it can generate the necessary suited combos for those cards, similarly it can do so for unsuited combos as well
+
 3. PokerTableGUI:
 
 This code block is the GUI for the app and was primarly built using ChatGPT. It consists of the following features:
 
 ~ A deck of 52 cards with colour coding
-~ Table set with placeholders for the hole cards of 9 players
+~ Table set with placeholders for the hole cards of a single player
 ~ A dead card set with places for 16 cards
 ~ A select feature to choose cards in the placeholders
 ~ A deselect feature to return the cards back to their original position if clicked on when inside a placeholder
 ~ A New Hand button to return all cards to their original deck position
+~ A range table with possible range of hands that the villain can have (select and desselect options available)
+~ Preset range options with drop-down feature for different positions
 ~ A Calculate Equity button to calculate equity for all players and display errors if insufficient cards have been inputted
 ~ A slider to adjust the number of times the simulation will occur
 
-## Major inspirations from this website (https://www.cardplayer.com/poker-tools/odds-calculator/texas-holdem)
+## GUI inspirations from this website (https://www.cardplayer.com/poker-tools/odds-calculator/texas-holdem) and this (https://openpokertools.com/equity/)
 
-This was a true passion project of mine and I would love to continue doing projects like these :).
+This is a true passion project of mine and I am loving projects like these :).
