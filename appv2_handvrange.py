@@ -379,18 +379,15 @@ def multi_way_equity(simul, player_card_set, community_cards, dead_cards):
                 win_rates[int(high_player_won)-1]+=1
             else:
                 for i in player_ties:
-                    tie_rates[i-1]+=1
-
-    
+                    tie_rates[i-1]+=1    
 
     global win_percent, tie_percent
     win_percent = round(((win_rates[0])/simul)*100, 3)
     tie_percent = round((tie_rates[0]/simul)*100, 3)
 
 def hand_v_range(simul, player_1, x_inp, com_cards, dead_cards):
-    player_1 = ['A♥', 'K♥']
     player_1_rem = []
-
+    
     deck = [rank + suit for rank in "AKQJT98765432" for suit in "♠♥♦♣"]
     for i in player_1:
         deck.remove(i)
@@ -463,9 +460,7 @@ def hand_v_range(simul, player_1, x_inp, com_cards, dead_cards):
         win_percent_array.append(win_percent)
         tie_percent_array.append(tie_percent)
         c += 1
-    
-    print(player_2_range_final)
-    print(win_percent_array)
+
     win_equity = round(mean(win_percent_array), 3)
     tie_equity = round(mean(tie_percent_array), 3)
     global result
